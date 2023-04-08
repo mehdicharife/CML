@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdarg.h>
 #include <string.h>
 #include <math.h>
-#include <unistd.h>
+
 
 #include "dtframe.h"
 #define PHI 1.61803398875
@@ -98,7 +100,10 @@ void set_dtframe_from_csv(dtframe* pdtframe, char* const path) {
     FILE* fp = fopen(path, "r");
     char line[1024];
     char* tok;
- 
+    
+    fgets(line, 1024, fp);
+    memset(line, '\0', 1024);
+
     while(fgets(line, 1024, fp)) {
         int offset = 0;
         char token[MAX_TOKEN_SIZE];
@@ -137,7 +142,7 @@ void set_dtframe_from_csv(dtframe* pdtframe, char* const path) {
 
 
 void print_dtframe(dtframe* pdtframe) {
-    for(int i = 0; i < pdtframe->vert_holding/10 -1; i++) {
+    for(int i = 0; i < pdtframe->vert_holding; i++) {
         for(int j = 0; j < pdtframe->hor_holdings[i]; j++) {
             print_datum((pdtframe->frame[i][j]));
             printf(" ");
@@ -145,14 +150,53 @@ void print_dtframe(dtframe* pdtframe) {
         }
 
         printf("\n");
+        sleep(0.6);
     }
 }
 
 
-int main(int argc, char* argv[]) {
+datum** get_dtframe_col(dtframe* pdtframe, int col_index) {
+    datum** col = malloc(pdtframe->vert_holding*sizeof(datum*));
+    for(int i = 0; i < pdtframe->vert_holding; i++) {
+        col[i] = pdtframe->frame[i][col_index - 1];
+    }
+    return col;
+}
+
+datum*** get_dtframe_cols(dtframe* pdtframe, int* data_size, int col_count, ...) {
+    datum*** dcols = malloc(pdtframe->vert_holding*sizeof(datum**));
+    for(int k = 0; k < pdtframe->vert_holding; k++) {
+        dcols[k] = malloc(col_count*sizeof(datum*));
+    }
+
+    int cols[col_count];
+    va_list args;
+    va_start(args, col_count);
+    for(int k = 0; k < col_count; k++) {
+        cols[k] = va_arg(args, int);
+    }
+    va_end(args);
+
+
+    for(int i = 0; i < pdtframe->vert_holding; i++) {
+        for(int j = 0; j < col_count; j++) {
+            dcols[i][j] = pdtframe->frame[i][cols[j] - 1];
+        }
+    }
+
+    data_size[0] = pdtframe->vert_holding;
+    data_size[1] = col_count;
+
+    return dcols;
+}
+
+
+
+
+/*int main(int argc, char* argv[]) {
     dtframe dtf;
     init_dtframe_from_csv(&dtf, 10, "titanic.csv");
     set_dtframe_from_csv(&dtf, "titanic.csv");
 
     print_dtframe(&dtf);
-}
+}*/
