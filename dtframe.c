@@ -191,12 +191,15 @@ datum*** get_dtframe_cols(dtframe* pdtframe, int* data_size, int col_count, ...)
 }
 
 
+void destroy_dtframe(dtframe* pdtframe) {
+    for(int i = 0; i < pdtframe->vert_holding; i++) {
+        for(int j = 0; j < pdtframe->hor_capacity; j++) {
+            free(pdtframe->frame[i][j]);
+        }
 
+        free(pdtframe->frame[i]);
+    }
 
-/*int main(int argc, char* argv[]) {
-    dtframe dtf;
-    init_dtframe_from_csv(&dtf, 10, "titanic.csv");
-    set_dtframe_from_csv(&dtf, "titanic.csv");
-
-    print_dtframe(&dtf);
-}*/
+    free(pdtframe->hor_holdings);
+    free(pdtframe);
+}

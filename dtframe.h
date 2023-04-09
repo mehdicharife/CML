@@ -17,4 +17,6 @@ void set_dtframe_from_csv(dtframe* pdtframe, char* const path);
 datum*** get_dtframe_cols(dtframe* pdtframe, int* data_size, int col_count, ...);
 datum** get_dtframe_col(dtframe* pdtframe, int col_index);
 void print_dtframe(dtframe* pdtframe);
+void destroy_dtframe(dtframe* pdtframe);
+
 #endif

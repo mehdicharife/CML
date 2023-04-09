@@ -20,9 +20,9 @@ int is_int(char* str) {
 }
 
 
-int is_float(char* str) {
+int is_double(char* str) {
     char* p;
-    float d = strtod(str, &p);
+    double d = strtod(str, &p);
 
     return !strlen(p);
 }
@@ -32,9 +32,9 @@ void set_datum_from_str(datum* pdatum, char* str) {
     if(is_int(str)) {
         pdatum->type = dint;
         pdatum->i = atoi(str);
-    } else if(is_float(str)) {
+    } else if(is_double(str)) {
         char* p;
-        pdatum->type = dfloat;
+        pdatum->type = ddouble;
         pdatum->x =  strtod(str,&p);                
     } else if(strlen(str)){
         pdatum->type = dstr;
@@ -51,7 +51,7 @@ void print_datum(datum* pdatum) {
         case dint:
             printf("%d", pdatum->i);
             break;
-        case dfloat:
+        case ddouble:
             printf("%lf", pdatum->x);
             break;
         case dstr:
@@ -72,7 +72,7 @@ char* get_pdatum_string(datum* pdatum) {
         case dint:
             snprintf(str_datum, snprintf(NULL, 0, "%d", pdatum->i) + 1, "%d", pdatum->i);
             break;
-        case dfloat:
+        case ddouble:
             snprintf(str_datum, snprintf(NULL, 0, "%lf", pdatum->x) + 1, "%lf", pdatum->x);
             break;
         case dstr:
@@ -92,20 +92,20 @@ void* get_datum_pcontent(datum* pdatum) {
         case dint:
             return &(pdatum->i);
             break;
-        case dfloat:
+        case ddouble:
             return &(pdatum->x);
             break;
     }
 }
 
-float get_datum_as_float(datum* pdatum) {
+double get_datum_as_double(datum* pdatum) {
     switch(pdatum->type) {
         case dint:
-            return (float) pdatum->i;
+            return (double) pdatum->i;
             break;
 
-        case dfloat:
-            return  (float) pdatum->x;
+        case ddouble:
+            return  (double) pdatum->x;
             break;
 
         case dstr:
@@ -115,17 +115,17 @@ float get_datum_as_float(datum* pdatum) {
 }
 
 
-float weighted_sum(datum** pX, float* params, int datum_count) {
-    float sum = 0;
+double weighted_sum(datum** pX, double* params, int datum_count) {
+    double sum = 0;
 
     for(int k = 0; k < datum_count; k++) {
-        float raw;
+        double raw;
 
         switch(pX[k]->type) {
             case dint:
                 raw = pX[k]->i;
                 break;
-            case dfloat:
+            case ddouble:
                 raw = pX[k]->x;
                 break;
 
@@ -143,7 +143,7 @@ float weighted_sum(datum** pX, float* params, int datum_count) {
 
 
 
-void train_test_split(datum*** data, datum** labels, datum**** ptrain_data, datum*** ptrain_labels, datum**** ptest_data, datum*** ptest_labels, int* data_size, float train_percentage) {
+void train_test_split(datum*** data, datum** labels, datum**** ptrain_data, datum*** ptrain_labels, datum**** ptest_data, datum*** ptest_labels, int* data_size, double train_percentage) {
     int train_rows_count = (int) (data_size[0]*train_percentage);
     int test_rows_count = data_size[0] - train_rows_count;
 
@@ -174,7 +174,7 @@ int datumcmp(datum* pdatum1, datum* pdatum2) {
             return (pdatum1->i - pdatum2->i);
             break;
 
-        case dfloat:
+        case ddouble:
             return (pdatum1->x - pdatum2->x);
             break;
 
