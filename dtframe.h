@@ -1,5 +1,5 @@
-#ifndef DARRAY_H
-#define DARRAY_H
+#ifndef DTFRAME_H
+#define DTFRAME_H
 
 #include "datum.h"
 

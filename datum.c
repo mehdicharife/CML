@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "datum.h"
 
+#include "datum.h"
+#include "glob.h"
 
 int is_int(char* str) {
     for(int k = 0; k < strlen(str); k++) {

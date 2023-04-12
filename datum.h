@@ -1,5 +1,6 @@
-#ifndef GENERAL_H
-#define GENERAL_H
+#ifndef DATUM_H
+#define DATUM_H
+
 
 enum dtype {
     dstr,
